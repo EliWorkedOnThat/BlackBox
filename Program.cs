@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 class Program
 {
+    public static readonly List<FileSnapshot> snapshots = new();
+
     static void Main()
     {
         string path = FileOrDirectoryPath();
@@ -13,6 +15,10 @@ class Program
         Console.WriteLine($"You selected: {path}");
 
         ByteCode(path);
+
+        Console.WriteLine(
+            $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
+        );
     }
 
     static string FileOrDirectoryPath()
@@ -26,16 +32,17 @@ class Program
         return path;
     }
 
-    class FileSnapshot
+    public class FileSnapshot
     {
         public string OriginalPath { get; set; }
         public byte[] Data { get; set; }
+
+        public byte[] EncryptedData {get; set;}
+        public byte[] IV {get; set;}
     }
 
     static void ByteCode(string path)
     {
-        List<FileSnapshot> snapshots = new List<FileSnapshot>();
-
         if (File.Exists(path))
         {
             Console.WriteLine("Path is a file.");
@@ -86,8 +93,18 @@ class Program
             Console.WriteLine("[ERROR] Path does not exist.");
         }
 
-        Console.WriteLine(
-            $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
-        );
+        static void Encryption()
+    {
+        foreach (FileSnapshot snapshot in snapshots)
+        {
+            
+        }
+    }
+
+    static void Decryption()
+        {
+            
+        }
+
     }
 }
