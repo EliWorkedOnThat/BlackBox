@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Collections.Generic;
+using System.Linq;
 
 class Program
 {
@@ -20,6 +21,7 @@ class Program
         ByteCode(path);
 
         Encryption();
+        Decryption();
 
         Console.WriteLine(
             $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
@@ -45,6 +47,8 @@ class Program
 
         public byte[] EncryptedData {get; set;}
         public byte[] IV {get; set;}
+
+        public byte[] DecryptedData { get; set; }
     }
 
     static void ByteCode(string path)
@@ -129,9 +133,30 @@ class Program
         }
     }
 
-    static void Decryption()
-        {
-            
-        }
+ static void Decryption()
+{
+    using Aes aes = Aes.Create();
 
+    aes.Key = encryptionKey;
+
+    foreach (FileSnapshot snapshot in snapshots)
+    {
+        aes.IV = snapshot.IV;
+
+        ICryptoTransform decryptor = aes.CreateDecryptor();
+
+        byte[] decrypted = decryptor.TransformFinalBlock(
+            snapshot.EncryptedData,
+            0,
+            snapshot.EncryptedData.Length
+        );
+
+        snapshot.DecryptedData = decrypted;
+        bool matches = snapshot.Data.SequenceEqual(snapshot.DecryptedData);
+
+        Console.WriteLine(
+            $"Decryption matches original: {matches}"
+        );
+    }
+}
     }
