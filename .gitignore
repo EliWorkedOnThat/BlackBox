@@ -1,0 +1,20 @@
+# Build output
+bin/
+obj/
+
+# User-specific files
+.vs/
+*.user
+*.suo
+
+# Configuration / secrets
+*.config
+.env
+.env.*
+
+# IDE files
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
