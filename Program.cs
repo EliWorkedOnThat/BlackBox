@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Collections.Generic;
 
 class Program
 {
@@ -25,16 +26,31 @@ class Program
         return path;
     }
 
+    class FileSnapshot
+    {
+        public string OriginalPath { get; set; }
+        public byte[] Data { get; set; }
+    }
+
     static void ByteCode(string path)
     {
+        List<FileSnapshot> snapshots = new List<FileSnapshot>();
+
         if (File.Exists(path))
         {
             Console.WriteLine("Path is a file.");
 
-            byte[] fileBytes = File.ReadAllBytes(path);
+            FileSnapshot snapshot = new FileSnapshot
+            {
+                OriginalPath = path,
+                Data = File.ReadAllBytes(path)
+            };
 
+            snapshots.Add(snapshot);
+
+            Console.WriteLine($"Reading: {snapshot.OriginalPath}");
             Console.WriteLine(
-                $"Successfully read {fileBytes.Length} bytes from the file."
+                $"Successfully read {snapshot.Data.Length} bytes."
             );
         }
         else if (Directory.Exists(path))
@@ -51,12 +67,17 @@ class Program
 
             foreach (string file in files)
             {
-                Console.WriteLine($"Reading: {file}");
+                FileSnapshot snapshot = new FileSnapshot
+                {
+                    OriginalPath = file,
+                    Data = File.ReadAllBytes(file)
+                };
 
-                byte[] fileBytes = File.ReadAllBytes(file);
+                snapshots.Add(snapshot);
 
+                Console.WriteLine($"Reading: {snapshot.OriginalPath}");
                 Console.WriteLine(
-                    $"Successfully read {fileBytes.Length} bytes."
+                    $"Successfully read {snapshot.Data.Length} bytes."
                 );
             }
         }
@@ -64,5 +85,9 @@ class Program
         {
             Console.WriteLine("[ERROR] Path does not exist.");
         }
+
+        Console.WriteLine(
+            $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
+        );
     }
 }
