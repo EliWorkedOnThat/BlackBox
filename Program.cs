@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 class Program
 {
+    
+    static byte[] encryptionKey;
+
     public static readonly List<FileSnapshot> snapshots = new();
 
     static void Main()
@@ -16,9 +19,12 @@ class Program
 
         ByteCode(path);
 
+        Encryption();
+
         Console.WriteLine(
             $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
         );
+
     }
 
     static string FileOrDirectoryPath()
@@ -92,12 +98,34 @@ class Program
         {
             Console.WriteLine("[ERROR] Path does not exist.");
         }
+    }
 
-        static void Encryption()
+    static void Encryption()
     {
+        using Aes aes = Aes.Create();
+
+        encryptionKey = aes.Key;
+
         foreach (FileSnapshot snapshot in snapshots)
         {
-            
+            aes.GenerateIV();
+
+            ICryptoTransform encryptor = aes.CreateEncryptor();
+
+            byte[] encrypted = encryptor.TransformFinalBlock(
+                snapshot.Data,
+                0,
+                snapshot.Data.Length
+            );
+
+            snapshot.EncryptedData = encrypted;
+            snapshot.IV = aes.IV;
+
+            Console.WriteLine($"Encrypted: {snapshot.OriginalPath}");
+            Console.WriteLine($"Original bytes: {snapshot.Data.Length}");
+            Console.WriteLine($"Encrypted bytes: {snapshot.EncryptedData.Length}");
+            Console.WriteLine($"IV bytes: {snapshot.IV.Length}");
+            Console.WriteLine();
         }
     }
 
@@ -107,4 +135,3 @@ class Program
         }
 
     }
-}
