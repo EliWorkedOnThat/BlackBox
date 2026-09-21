@@ -20,7 +20,7 @@ class Program
             "Please enter the path of the folder or file you want to store in the BlackBox:"
         );
 
-        string path = Console.ReadLine();
+        string path = Console.ReadLine().Trim('"');
 
         return path;
     }
