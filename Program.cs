@@ -12,21 +12,40 @@ class Program
 
     public static readonly List<FileSnapshot> snapshots = new();
 
-    static void Main()
+   static void Main()
     {
-        string path = FileOrDirectoryPath();
+        while (true)
+        {
+            int choice = Menu();
 
-        Console.WriteLine($"You selected: {path}");
+            if (choice == 1)
+            {
+                string path = FileOrDirectoryPath();
 
-        ByteCode(path);
+                Console.WriteLine($"You selected: {path}");
 
-        Encryption();
-        Decryption();
+                ByteCode(path);
+                Encryption();
+            }
+            else if (choice == 2)
+            {
+                Console.WriteLine("Recall selected.");
+                
+                 int selected = RecallMeznu();
 
-        Console.WriteLine(
-            $"BlackBox currently contains {snapshots.Count} file snapshot(s)."
-        );
+                FileSnapshot snapshot = snapshots[selected - 1];
 
+                Console.WriteLine($"You selected: {snapshot.OriginalPath}");
+                
+                Decryption(snapshot);
+
+            }
+            else if (choice == 3)
+            {
+                Console.WriteLine("Closing BlackBox...");
+                break;
+            }
+        }
     }
 
     static string FileOrDirectoryPath()
@@ -133,14 +152,11 @@ class Program
         }
     }
 
- static void Decryption()
-{
-    using Aes aes = Aes.Create();
-
-    aes.Key = encryptionKey;
-
-    foreach (FileSnapshot snapshot in snapshots)
+    static void Decryption(FileSnapshot snapshot)
     {
+        using Aes aes = Aes.Create();
+
+        aes.Key = encryptionKey;
         aes.IV = snapshot.IV;
 
         ICryptoTransform decryptor = aes.CreateDecryptor();
@@ -152,11 +168,38 @@ class Program
         );
 
         snapshot.DecryptedData = decrypted;
-        bool matches = snapshot.Data.SequenceEqual(snapshot.DecryptedData);
 
-        Console.WriteLine(
-            $"Decryption matches original: {matches}"
-        );
+        Console.WriteLine($"Decrypted: {snapshot.OriginalPath}");
+        Console.WriteLine($"Decrypted bytes: {snapshot.DecryptedData.Length}");
     }
-}
+
+    static int RecallMeznu()
+    {
+        int count = 1;
+
+        Console.WriteLine("==== Recall Menu ====");
+
+        foreach (FileSnapshot snapshot in snapshots)
+        {
+            Console.WriteLine($"{count}. {snapshot.OriginalPath}");
+            count++;
+        }
+
+        Console.Write("Choose a snapshot: ");
+
+        return int.Parse(Console.ReadLine());
+    }
+
+    static int Menu()
+    {
+        Console.WriteLine();
+        Console.WriteLine("=====BLACKBOX====");
+        Console.WriteLine("1. Store file/directory");
+        Console.WriteLine("2. Recall file/directory");
+        Console.WriteLine("3. Exit");
+        Console.WriteLine("Choose an option:");
+
+        return int.Parse(Console.ReadLine());
+    }
+
     }
