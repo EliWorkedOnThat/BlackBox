@@ -1,5 +1,4 @@
-﻿// Modules
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Collections.Generic;
@@ -7,13 +6,17 @@ using System.Linq;
 
 class Program
 {
-    
     static byte[] encryptionKey;
 
     public static readonly List<FileSnapshot> snapshots = new();
 
-   static void Main()
+    static void Main()
     {
+        using (Aes aes = Aes.Create())
+        {
+            encryptionKey = aes.Key;
+        }
+
         while (true)
         {
             int choice = Menu();
@@ -24,21 +27,27 @@ class Program
 
                 Console.WriteLine($"You selected: {path}");
 
+                int previousCount = snapshots.Count;
+
                 ByteCode(path);
-                Encryption();
+
+                for (int i = previousCount; i < snapshots.Count; i++)
+                {
+                    Encryption(snapshots[i]);
+                }
             }
             else if (choice == 2)
             {
                 Console.WriteLine("Recall selected.");
-                
-                 int selected = RecallMeznu();
+
+                int selected = RecallMeznu();
 
                 FileSnapshot snapshot = snapshots[selected - 1];
 
                 Console.WriteLine($"You selected: {snapshot.OriginalPath}");
-                
-                Decryption(snapshot);
 
+                Decryption(snapshot);
+                Reconstruction(snapshot);
             }
             else if (choice == 3)
             {
@@ -64,8 +73,8 @@ class Program
         public string OriginalPath { get; set; }
         public byte[] Data { get; set; }
 
-        public byte[] EncryptedData {get; set;}
-        public byte[] IV {get; set;}
+        public byte[] EncryptedData { get; set; }
+        public byte[] IV { get; set; }
 
         public byte[] DecryptedData { get; set; }
     }
@@ -123,33 +132,30 @@ class Program
         }
     }
 
-    static void Encryption()
+    static void Encryption(FileSnapshot snapshot)
     {
         using Aes aes = Aes.Create();
 
-        encryptionKey = aes.Key;
+        aes.Key = encryptionKey;
 
-        foreach (FileSnapshot snapshot in snapshots)
-        {
-            aes.GenerateIV();
+        aes.GenerateIV();
 
-            ICryptoTransform encryptor = aes.CreateEncryptor();
+        ICryptoTransform encryptor = aes.CreateEncryptor();
 
-            byte[] encrypted = encryptor.TransformFinalBlock(
-                snapshot.Data,
-                0,
-                snapshot.Data.Length
-            );
+        byte[] encrypted = encryptor.TransformFinalBlock(
+            snapshot.Data,
+            0,
+            snapshot.Data.Length
+        );
 
-            snapshot.EncryptedData = encrypted;
-            snapshot.IV = aes.IV;
+        snapshot.EncryptedData = encrypted;
+        snapshot.IV = aes.IV;
 
-            Console.WriteLine($"Encrypted: {snapshot.OriginalPath}");
-            Console.WriteLine($"Original bytes: {snapshot.Data.Length}");
-            Console.WriteLine($"Encrypted bytes: {snapshot.EncryptedData.Length}");
-            Console.WriteLine($"IV bytes: {snapshot.IV.Length}");
-            Console.WriteLine();
-        }
+        Console.WriteLine($"Encrypted: {snapshot.OriginalPath}");
+        Console.WriteLine($"Original bytes: {snapshot.Data.Length}");
+        Console.WriteLine($"Encrypted bytes: {snapshot.EncryptedData.Length}");
+        Console.WriteLine($"IV bytes: {snapshot.IV.Length}");
+        Console.WriteLine();
     }
 
     static void Decryption(FileSnapshot snapshot)
@@ -171,6 +177,33 @@ class Program
 
         Console.WriteLine($"Decrypted: {snapshot.OriginalPath}");
         Console.WriteLine($"Decrypted bytes: {snapshot.DecryptedData.Length}");
+    }
+
+    static void Reconstruction(FileSnapshot snapshot)
+    {
+        string recoveryDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            "BlackBox_Recovered"
+        );
+
+        Directory.CreateDirectory(recoveryDirectory);
+
+        string fileName = Path.GetFileName(snapshot.OriginalPath);
+
+        string recoveryPath = Path.Combine(
+            recoveryDirectory,
+            fileName
+        );
+
+        File.WriteAllBytes(
+            recoveryPath,
+            snapshot.DecryptedData
+        );
+
+        Console.WriteLine($"Reconstructed: {recoveryPath}");
+        Console.WriteLine(
+            $"Successfully wrote {snapshot.DecryptedData.Length} bytes."
+        );
     }
 
     static int RecallMeznu()
@@ -201,5 +234,5 @@ class Program
 
         return int.Parse(Console.ReadLine());
     }
+}
 
-    }
