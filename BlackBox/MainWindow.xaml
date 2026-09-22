@@ -30,6 +30,7 @@
             HorizontalScrollBarVisibility="Auto">
 
             <TextBox
+            x:Name="SnapshotDisplay"
             IsReadOnly="True"
             TextWrapping="Wrap"
             AcceptsReturn="True"
@@ -51,7 +52,9 @@
                 Width="250"
                 Height="60"
                 FontSize="18"
-                Margin="0,0,15,0"/>
+                Margin="0,0,15,0"
+                Click="SelectSnapshot"
+                />
 
             <Button
                 Content="Resurrect Snapshot"
