@@ -72,7 +72,8 @@
                 Content="Resurrect Snapshot"
                 Width="250"
                 Height="60"
-                FontSize="18"/>
+                FontSize="18"
+                Click="OpenRestoreWindow"/>
 
         </StackPanel>
 

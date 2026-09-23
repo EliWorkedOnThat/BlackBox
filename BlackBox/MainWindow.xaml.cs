@@ -30,6 +30,13 @@ public partial class MainWindow : Window
     {
         SnapshotDisplay.Text = "Welcome to Black Box Save and Restore Files as you please!";
     }
+    
+    private void OpenRestoreWindow(object sender, RoutedEventArgs e)
+        {
+            RestoreWindow window = new RestoreWindow();
+
+            window.ShowDialog();
+        }
 
     private void SelectSnapshot(object sender, RoutedEventArgs e)
     {
@@ -52,10 +59,10 @@ public partial class MainWindow : Window
                 snapshots.Add(snapshot);
                 UpdateFileCount();
 
-            SnapshotDisplay.Text =
+            SnapshotDisplay.Text +=
                 $"File: {System.IO.Path.GetFileName(selectedFile)}\n" +
                 $"Path: {selectedFile}\n" +
-                $"Size: {fileData.Length} bytes";
+                $"Size: {fileData.Length} bytes\n\n";
         }
     }
 
