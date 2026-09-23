@@ -44,6 +44,23 @@ public partial class MainWindow : Window
 
         return path;
     }
+    
+    private string WriteChunksToDisk(List<byte[]> chunks)
+    {
+        string snapshotId = Guid.NewGuid().ToString();
+
+        string snapshotFolder = System.IO.Path.Combine(storagePath, snapshotId);
+        Directory.CreateDirectory(snapshotFolder);
+
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            string chunkPath = System.IO.Path.Combine(snapshotFolder, $"chunk_{i:D4}.bin");
+            File.WriteAllBytes(chunkPath, chunks[i]);
+        }
+
+        return snapshotFolder;
+    }
+
 
     private void OpenRestoreWindow(object sender, RoutedEventArgs e)
         {
@@ -51,6 +68,25 @@ public partial class MainWindow : Window
 
             window.ShowDialog();
         }
+
+    private const int ChunkSize = 1024 * 1024;
+
+   private List<byte[]> SplitIntoChunks(byte[] data)
+    {
+        List<byte[]> chunks = new();
+
+        for (int offset = 0; offset < data.Length; offset += ChunkSize)
+        {
+            int length = Math.Min(ChunkSize, data.Length - offset);
+
+            byte[] chunk = new byte[length];
+            Array.Copy(data, offset, chunk, 0, length);
+
+            chunks.Add(chunk);
+        }
+
+        return chunks;
+    }
 
     private void SelectSnapshot(object sender, RoutedEventArgs e)
     {
@@ -64,6 +100,10 @@ public partial class MainWindow : Window
 
             byte[] fileData = File.ReadAllBytes(selectedFile);
 
+            List<byte[]> chunks = SplitIntoChunks(fileData);
+
+            string snapshotFolder = WriteChunksToDisk(chunks);
+
             FileSnapshot snapshot = new FileSnapshot
                 {
                     OriginalPath = selectedFile,
@@ -76,7 +116,9 @@ public partial class MainWindow : Window
             SnapshotDisplay.Text +=
                 $"File: {System.IO.Path.GetFileName(selectedFile)}\n" +
                 $"Path: {selectedFile}\n" +
-                $"Size: {fileData.Length} bytes\n\n";
+                $"Size: {fileData.Length} bytes\n" +
+                $"Chunks: {chunks.Count}\n"+
+                $"Saved to: {snapshotFolder}\n\n";
         }
     }
 
