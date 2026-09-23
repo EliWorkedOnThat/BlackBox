@@ -19,18 +19,32 @@ public partial class MainWindow : Window
 {
 
     public List<FileSnapshot> snapshots = new();
+    private string storagePath = "";
 
     public MainWindow()
     {   
         InitializeComponent();
+        storagePath = CreateStorageFolder();
         GreetMessage();
     }
 
     public void GreetMessage()
     {
-        SnapshotDisplay.Text = "Welcome to Black Box Save and Restore Files as you please!";
+        SnapshotDisplay.Text = "Welcome to Black Box Save and Restore Files as you please!\n";
+        SnapshotDisplay.Text += $"Storage: {storagePath}\n\n";
     }
     
+    private string CreateStorageFolder()
+    {
+        string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        string path = System.IO.Path.Combine(appData, "BlackBox", "Snapshots");
+
+        Directory.CreateDirectory(path);
+
+        return path;
+    }
+
     private void OpenRestoreWindow(object sender, RoutedEventArgs e)
         {
             RestoreWindow window = new RestoreWindow(snapshots);
