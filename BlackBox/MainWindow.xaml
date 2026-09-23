@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BlackBox"
         mc:Ignorable="d"
         Title="BlackBox"
-        Background="#E0B0FF"
+        Background="#242526"
         Height="800"
         Width="900">
 
@@ -60,20 +60,27 @@
             Margin="0,150,0,0">
 
             <Button
-                Content="Save Snapshot"
-                Width="250"
-                Height="60"
-                FontSize="18"
-                Margin="0,0,15,0"
-                Click="SelectSnapshot"
-                />
+            Content="Save Snapshot"
+            Width="250"
+            Height="60"
+            FontSize="18"
+            Foreground="Cyan"
+            Background="Black"
+            BorderBrush="Cyan"
+            BorderThickness="2"
+            Margin="0,0,15,0"
+            Click="SelectSnapshot"/>
 
             <Button
-                Content="Resurrect Snapshot"
-                Width="250"
-                Height="60"
-                FontSize="18"
-                Click="OpenRestoreWindow"/>
+            Content="Resurrect Snapshot"
+            Width="250"
+            Height="60"
+            FontSize="18"
+            Foreground="Cyan"
+            Background="Black"
+            BorderBrush="Cyan"
+            BorderThickness="2"
+            Click="OpenRestoreWindow"/>
 
         </StackPanel>
 
