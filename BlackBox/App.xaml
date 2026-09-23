@@ -85,7 +85,6 @@
             </Setter>
         </Style>
 
-        <!-- ListBox items: no default blue selection -->
         <Style x:Key="SnapshotItem" TargetType="ListBoxItem">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
