@@ -11,13 +11,17 @@ using System.Windows.Shapes;
 using System;
 using System.IO;
 using Microsoft.Win32;
+using System.Collections.Generic;
 
 namespace BlackBox;
 
 public partial class MainWindow : Window
 {
+
+    public List<FileSnapshot> snapshots = new();
+
     public MainWindow()
-    {
+    {   
         InitializeComponent();
         GreetMessage();
     }
@@ -37,7 +41,27 @@ public partial class MainWindow : Window
         {
             string selectedFile = dialog.FileName;
 
-            SnapshotDisplay.Text = selectedFile;
+            byte[] fileData = File.ReadAllBytes(selectedFile);
+
+            FileSnapshot snapshot = new FileSnapshot
+                {
+                    OriginalPath = selectedFile,
+                    Data = fileData
+                };
+
+                snapshots.Add(snapshot);
+                UpdateFileCount();
+
+            SnapshotDisplay.Text =
+                $"File: {System.IO.Path.GetFileName(selectedFile)}\n" +
+                $"Path: {selectedFile}\n" +
+                $"Size: {fileData.Length} bytes";
         }
     }
+
+        private void UpdateFileCount()
+    {
+        FileCountDisplay.Text = $"File Count: {snapshots.Count}";
+    }
+
 }

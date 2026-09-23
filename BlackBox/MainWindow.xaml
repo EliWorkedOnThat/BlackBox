@@ -12,13 +12,25 @@
 
     <Grid>
 
+        <StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Top"
+        Margin="0,30,0,0">
+
         <TextBlock
             Text="BlackBox"
             FontSize="32"
             FontWeight="Bold"
+            HorizontalAlignment="Center"/>
+
+        <TextBlock
+            x:Name="FileCountDisplay"
+            Text="File Count: 0"
+            FontSize="24"
             HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Margin="0,30,0,0"/>
+            Margin="0,10,0,0"/>
+
+        </StackPanel>
 
         <ScrollViewer
             HorizontalAlignment="Center"
