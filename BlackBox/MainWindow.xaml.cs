@@ -33,7 +33,7 @@ public partial class MainWindow : Window
     
     private void OpenRestoreWindow(object sender, RoutedEventArgs e)
         {
-            RestoreWindow window = new RestoreWindow();
+            RestoreWindow window = new RestoreWindow(snapshots);
 
             window.ShowDialog();
         }
