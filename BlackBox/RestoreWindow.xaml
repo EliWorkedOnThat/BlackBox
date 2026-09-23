@@ -2,41 +2,56 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Snapshot"
-        Background="#242526"
+        Background="{StaticResource BgBrush}"
         Height="700"
-        Width="700">
+        Width="700"
+        MinHeight="500"
+        MinWidth="500"
+        WindowStartupLocation="CenterScreen">
 
-    <Grid>
+    <Grid Margin="40,30,40,40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <TextBlock
-            Text="Select Snapshot"
-            FontSize="28"
-            FontWeight="Bold"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Margin="0,25,0,0"/>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,24">
+            <TextBlock Text="Select Snapshot"
+                       FontFamily="Segoe UI"
+                       FontSize="30"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource AccentBrush}"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Pick a snapshot to bring back"
+                       FontFamily="Segoe UI"
+                       FontSize="14"
+                       Foreground="{StaticResource MutedTextBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,2,0,0"/>
+        </StackPanel>
 
-        <ListBox
-            x:Name="SnapshotList"
-            Width="550"
-            Height="400"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Margin="0,90,0,0"/>
+        <Border Grid.Row="1"
+                MaxWidth="560"
+                Background="{StaticResource CardBrush}"
+                BorderBrush="{StaticResource CardBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="8">
+            <ListBox x:Name="SnapshotList"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     ItemContainerStyle="{StaticResource SnapshotItem}"/>
+        </Border>
 
-        <Button
-            Content="Resurrect"
-            Width="250"
-            Height="70"
-            FontSize="22"
-            Foreground="Cyan"
-            Background="Black"
-            BorderBrush="Cyan"
-            BorderThickness="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Margin="0,530,0,0"
-            Click="RestoreBytes"/>
-            </Grid>
-
+        <Button Grid.Row="2"
+                Content="Resurrect"
+                Style="{StaticResource AccentButton}"
+                Width="240"
+                Height="54"
+                FontSize="18"
+                HorizontalAlignment="Center"
+                Margin="0,24,0,0"
+                Click="RestoreBytes"/>
+    </Grid>
 </Window>
